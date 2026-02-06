@@ -1,0 +1,20 @@
+{
+  "name": "bethel-ministracion",
+  "version": "1.0.0",
+  "description": "Aplicación Electron para registrar personas en eventos de iglesia",
+  "main": "src/main/main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "build": "echo 'Build script placeholder'"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^9.2.2"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0"
+  }
+}

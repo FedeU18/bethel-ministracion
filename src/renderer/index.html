@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bethel - Registro de Ministración</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📖 Registro de Ministración</h1>
+        <p class="subtitle">Iglesia Bethel - Evento de Ministración</p>
+      </header>
+
+      <main>
+        <section class="form-section">
+          <h2>Registrar Nueva Persona</h2>
+
+          <form id="registroForm">
+            <div class="form-group">
+              <label for="apellido">Apellido *</label>
+              <input
+                type="text"
+                id="apellido"
+                name="apellido"
+                placeholder="Ej: García"
+                required
+                autofocus
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="nombre">Nombre *</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Ej: Juan"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              Registrar Persona
+            </button>
+          </form>
+
+          <div id="mensajeEstado" class="mensaje"></div>
+        </section>
+
+        <section class="lista-section">
+          <h2>Personas Registradas</h2>
+          <button id="btnRefrescar" class="btn btn-secondary">
+            Actualizar Lista
+          </button>
+
+          <div id="listadoPersonas" class="listado">
+            <p class="loading">Cargando personas...</p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2026 Iglesia Bethel | Aplicación Offline</p>
+      </footer>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
