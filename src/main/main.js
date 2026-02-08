@@ -9,6 +9,9 @@ const {
   initializeDatabase,
   addPerson,
   getAllPeople,
+  assignPastorAndAttend,
+  getPendingPeople,
+  getAttendedPeople,
 } = require("../database/db");
 
 // Variable global para mantener la referencia a la ventana
@@ -94,6 +97,43 @@ ipcMain.handle("get-all-people", async (event) => {
     return { success: true, data: people };
   } catch (error) {
     console.error("Error al obtener personas:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Obtener personas pendientes
+ipcMain.handle("get-pending-people", async (event) => {
+  try {
+    const people = getPendingPeople();
+    return { success: true, data: people };
+  } catch (error) {
+    console.error("Error al obtener personas pendientes:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Obtener personas atendidas
+ipcMain.handle("get-attended-people", async (event) => {
+  try {
+    const people = getAttendedPeople();
+    return { success: true, data: people };
+  } catch (error) {
+    console.error("Error al obtener personas atendidas:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Asignar pastor y marcar como atendido
+ipcMain.handle("assign-pastor", async (event, { id, pastor }) => {
+  try {
+    const result = assignPastorAndAttend(id, pastor);
+    if (result) {
+      return { success: true };
+    } else {
+      return { success: false, error: "No se pudo actualizar el registro" };
+    }
+  } catch (error) {
+    console.error("Error al asignar pastor:", error);
     return { success: false, error: error.message };
   }
 });

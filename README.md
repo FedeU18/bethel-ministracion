@@ -110,6 +110,32 @@ bethel-ministracion/
 2. Instala las dependencias nuevamente: `npm install`
 3. Elimina `node_modules` y vuelve a instalar
 
+### Error: "MODULE_VERSION 127" vs "MODULE_VERSION 121"
+
+Este error ocurre cuando `better-sqlite3` fue compilado con una versión diferente de Node.js.
+
+**Solución automática:**
+
+```bash
+npm install
+```
+
+El proyecto está configurado para ejecutar `electron-rebuild` automáticamente después de instalar las dependencias.
+
+**Si aún persiste el error, intenta:**
+
+```bash
+npm run rebuild
+```
+
+O manualmente:
+
+```bash
+rmdir /s /q node_modules
+del package-lock.json
+npm install
+```
+
 ### Errores de base de datos
 
 1. Elimina la carpeta `data/` para resetear la BD

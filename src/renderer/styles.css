@@ -144,6 +144,51 @@ section h2 {
   transform: translateY(-2px);
 }
 
+.btn-asignar {
+  background: #17a2b8;
+  color: white;
+  padding: 8px 15px;
+  font-size: 0.85em;
+  width: 100%;
+  margin: 0;
+}
+
+.btn-asignar:hover {
+  background: #138496;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+  margin-left: 10px;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+/* Formulario de Asignación */
+.asignar-section {
+  background: #f8f9fa;
+  border-left: 4px solid #17a2b8;
+}
+
+.asignar-section select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1em;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.asignar-section select:focus {
+  outline: none;
+  border-color: #17a2b8;
+  box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+}
+
 /* Mensajes */
 .mensaje {
   margin-top: 20px;
@@ -214,13 +259,18 @@ section h2 {
 }
 
 .estado-registrado {
-  background: #d4edda;
-  color: #155724;
+  background: #fff3cd;
+  color: #856404;
 }
 
-.estado-ministrado {
-  background: #cfe2ff;
-  color: #084298;
+.estado-pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado-atendido {
+  background: #d4edda;
+  color: #155724;
 }
 
 /* Textos de estado */

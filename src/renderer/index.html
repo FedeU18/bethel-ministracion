@@ -10,10 +10,10 @@
     <div class="container">
       <header>
         <h1>📖 Registro de Ministración</h1>
-        <p class="subtitle">Iglesia Bethel - Evento de Ministración</p>
       </header>
 
       <main>
+        <!-- Sección de Registro -->
         <section class="form-section">
           <h2>Registrar Nueva Persona</h2>
 
@@ -49,20 +49,61 @@
           <div id="mensajeEstado" class="mensaje"></div>
         </section>
 
+        <!-- Sección de Personas Pendientes -->
         <section class="lista-section">
-          <h2>Personas Registradas</h2>
-          <button id="btnRefrescar" class="btn btn-secondary">
-            Actualizar Lista
+          <h2>⏳ Personas Pendientes de Ministración</h2>
+          <button id="btnRefrescarPendientes" class="btn btn-secondary">
+            Actualizar Pendientes
           </button>
 
-          <div id="listadoPersonas" class="listado">
-            <p class="loading">Cargando personas...</p>
+          <div id="listadoPendientes" class="listado">
+            <p class="loading">Cargando personas pendientes...</p>
+          </div>
+        </section>
+
+        <!-- Sección de Asignación de Pastor -->
+        <section class="asignar-section">
+          <h2>👨‍🙏 Asignar Pastor</h2>
+
+          <div id="formularioAsignacion" style="display: none">
+            <div class="form-group">
+              <label for="selectorPastor">Seleccionar Pastor *</label>
+              <select id="selectorPastor" required>
+                <option value="">-- Seleccionar pastor --</option>
+                <option value="Pastor Carlos">Pastor Carlos</option>
+                <option value="Pastor Juan">Pastor Juan</option>
+                <option value="Pastor María">Pastor María</option>
+                <option value="Pastor Pedro">Pastor Pedro</option>
+                <option value="Pastor Ana">Pastor Ana</option>
+                <option value="Pastor Roberto">Pastor Roberto</option>
+              </select>
+            </div>
+            <button id="btnConfirmarAsignacion" class="btn btn-primary">
+              Confirmar Asignación
+            </button>
+            <button id="btnCancelarAsignacion" class="btn btn-danger">
+              Cancelar
+            </button>
+          </div>
+
+          <div id="mensajeAsignacion" class="mensaje"></div>
+        </section>
+
+        <!-- Sección de Personas Atendidas -->
+        <section class="lista-section">
+          <h2>✅ Personas Atendidas</h2>
+          <button id="btnRefrescarAtendidas" class="btn btn-secondary">
+            Actualizar Atendidas
+          </button>
+
+          <div id="listadoAtendidas" class="listado">
+            <p class="loading">Cargando personas atendidas...</p>
           </div>
         </section>
       </main>
 
       <footer>
-        <p>&copy; 2026 Iglesia Bethel | Aplicación Offline</p>
+        <p>&copy; 2026 Jesús es Rey | Aplicación Offline</p>
       </footer>
     </div>
 

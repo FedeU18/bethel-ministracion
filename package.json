@@ -7,6 +7,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --enable-logging",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-rebuild -f -w better-sqlite3",
     "build": "echo 'Build script placeholder'"
   },
   "author": "",
@@ -15,6 +17,7 @@
     "better-sqlite3": "^9.2.2"
   },
   "devDependencies": {
-    "electron": "^29.0.0"
+    "electron": "^29.0.0",
+    "electron-rebuild": "^3.1.7"
   }
 }

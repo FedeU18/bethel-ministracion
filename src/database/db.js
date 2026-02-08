@@ -20,6 +20,51 @@ if (!fs.existsSync(dataDir)) {
 let db = null;
 
 /**
+ * Agregá columnas faltantes a la tabla existente
+ */
+function addMissingColumns() {
+  try {
+    // Verificar e intentar agregar columna 'pastor'
+    try {
+      db.exec("SELECT pastor FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'pastor'...");
+        db.exec("ALTER TABLE personas ADD COLUMN pastor TEXT");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'fecha_atencion'
+    try {
+      db.exec("SELECT fecha_atencion FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'fecha_atencion'...");
+        db.exec("ALTER TABLE personas ADD COLUMN fecha_atencion DATETIME");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'estado' con valor por defecto
+    try {
+      db.exec("SELECT estado FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'estado'...");
+        db.exec(
+          "ALTER TABLE personas ADD COLUMN estado TEXT DEFAULT 'pendiente'",
+        );
+        // Actualizar registros existentes
+        db.exec(
+          "UPDATE personas SET estado = 'pendiente' WHERE estado IS NULL",
+        );
+      }
+    }
+  } catch (error) {
+    console.warn("Aviso al agregar columnas:", error.message);
+  }
+}
+
+/**
  * Inicializa la base de datos y crea las tablas si no existen
  */
 function initializeDatabase() {
@@ -33,11 +78,17 @@ function initializeDatabase() {
         apellido TEXT NOT NULL,
         nombre TEXT NOT NULL,
         fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
-        estado TEXT DEFAULT 'registrado'
+        estado TEXT DEFAULT 'pendiente',
+        pastor TEXT,
+        fecha_atencion DATETIME
       )
     `;
 
     db.exec(createTableSQL);
+
+    // Agregar columnas faltantes si es una tabla existente
+    addMissingColumns();
+
     console.log("Base de datos inicializada correctamente");
     return true;
   } catch (error) {
@@ -150,6 +201,76 @@ function updatePersonStatus(id, estado) {
   }
 }
 
+/**
+ * Asigna un pastor a una persona y cambia su estado a "atendido"
+ * @param {number} id - ID de la persona
+ * @param {string} pastor - Nombre del pastor
+ * @returns {boolean} Verdadero si se actualizó correctamente
+ */
+function assignPastorAndAttend(id, pastor) {
+  try {
+    const updateSQL = `
+      UPDATE personas
+      SET pastor = ?, estado = 'atendido', fecha_atencion = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+
+    const stmt = db.prepare(updateSQL);
+    const result = stmt.run(pastor, id);
+
+    return result.changes > 0;
+  } catch (error) {
+    console.error("Error al asignar pastor:", error);
+    throw error;
+  }
+}
+
+/**
+ * Obtiene todas las personas con estado "pendiente"
+ * @returns {Array} Array de personas pendientes
+ */
+function getPendingPeople() {
+  try {
+    const selectSQL = `
+      SELECT id, apellido, nombre, fecha_registro, estado, pastor
+      FROM personas
+      WHERE estado = 'pendiente'
+      ORDER BY fecha_registro ASC
+    `;
+
+    const stmt = db.prepare(selectSQL);
+    const people = stmt.all();
+
+    return people;
+  } catch (error) {
+    console.error("Error al obtener personas pendientes:", error);
+    throw error;
+  }
+}
+
+/**
+ * Obtiene todas las personas con estado "atendido"
+ * @returns {Array} Array de personas atendidas
+ */
+function getAttendedPeople() {
+  try {
+    const selectSQL = `
+      SELECT id, apellido, nombre, fecha_registro, estado, pastor, fecha_atencion
+      FROM personas
+      WHERE estado = 'atendido'
+      ORDER BY fecha_atencion DESC
+    `;
+
+    const stmt = db.prepare(selectSQL);
+    const people = stmt.all();
+
+    return people;
+  } catch (error) {
+    console.error("Error al obtener personas atendidas:", error);
+    throw error;
+  }
+}
+
 // Exportar funciones
 module.exports = {
   initializeDatabase,
@@ -157,4 +278,7 @@ module.exports = {
   getAllPeople,
   getPersonById,
   updatePersonStatus,
+  assignPastorAndAttend,
+  getPendingPeople,
+  getAttendedPeople,
 };
