@@ -8,64 +8,154 @@
   </head>
   <body>
     <div class="container">
+      <!-- Header con botón de registrar -->
       <header>
         <h1>📖 Registro de Ministración</h1>
+        <button id="btnAbrirModal" class="btn btn-primary">
+          + Registrar Persona
+        </button>
       </header>
 
-      <main>
-        <!-- Sección de Registro -->
-        <section class="form-section">
-          <h2>Registrar Nueva Persona</h2>
-
-          <form id="registroForm">
-            <div class="form-group">
-              <label for="apellido">Apellido *</label>
-              <input
-                type="text"
-                id="apellido"
-                name="apellido"
-                placeholder="Ej: García"
-                required
-                autofocus
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="nombre">Nombre *</label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                placeholder="Ej: Juan"
-                required
-              />
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-              Registrar Persona
-            </button>
-          </form>
-
-          <div id="mensajeEstado" class="mensaje"></div>
-        </section>
-
-        <!-- Sección de Personas Pendientes -->
-        <section class="lista-section">
-          <h2>⏳ Personas Pendientes de Ministración</h2>
+      <!-- Layout de 2 columnas -->
+      <main class="main-grid">
+        <!-- Columna Izquierda: Personas Pendientes -->
+        <section class="columna-izquierda">
+          <h2>⏳ Personas Registradas (Pendientes)</h2>
           <button id="btnRefrescarPendientes" class="btn btn-secondary">
-            Actualizar Pendientes
+            Actualizar
           </button>
-
           <div id="listadoPendientes" class="listado">
-            <p class="loading">Cargando personas pendientes...</p>
+            <p class="loading">Cargando...</p>
           </div>
         </section>
 
-        <!-- Sección de Asignación de Pastor -->
-        <section class="asignar-section">
-          <h2>👨‍🙏 Asignar Pastor</h2>
+        <!-- Columna Derecha: Personas Ministradas -->
+        <section class="columna-derecha">
+          <h2>✅ Personas Ministradas</h2>
+          <button id="btnRefrescarAtendidas" class="btn btn-secondary">
+            Actualizar
+          </button>
+          <div id="listadoAtendidas" class="listado">
+            <p class="loading">Cargando...</p>
+          </div>
+        </section>
+      </main>
 
-          <div id="formularioAsignacion" style="display: none">
+      <!-- Modal de Registro -->
+      <div id="modalRegistro" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Registrar Nueva Persona</h2>
+            <button id="btnCerrarModal" class="btn-close">&times;</button>
+          </div>
+
+          <form id="registroForm" class="modal-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombre">Nombre *</label>
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  placeholder="Ej: Juan"
+                  required
+                  autofocus
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="apellido">Apellido *</label>
+                <input
+                  type="text"
+                  id="apellido"
+                  name="apellido"
+                  placeholder="Ej: García"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edad">Edad</label>
+                <input
+                  type="number"
+                  id="edad"
+                  name="edad"
+                  placeholder="Ej: 25"
+                  min="1"
+                  max="120"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input
+                  type="text"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="Ej: 123456789"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dni">DNI</label>
+                <input
+                  type="text"
+                  id="dni"
+                  name="dni"
+                  placeholder="Ej: 12345678"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="lider">Líder</label>
+                <input
+                  type="text"
+                  id="lider"
+                  name="lider"
+                  placeholder="Ej: Pastor Juan"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="coordinador">Coordinador</label>
+              <input
+                type="text"
+                id="coordinador"
+                name="coordinador"
+                placeholder="Ej: María López"
+              />
+            </div>
+
+            <div id="mensajeEstado" class="mensaje"></div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button type="button" id="btnCancelar" class="btn btn-secondary">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Asignación de Pastor -->
+      <div id="modalAsignacion" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-small">
+          <div class="modal-header">
+            <h2>👨‍🙏 Asignar Pastor</h2>
+            <button id="btnCerrarModalAsignacion" class="btn-close">
+              &times;
+            </button>
+          </div>
+
+          <div class="modal-body">
             <div class="form-group">
               <label for="selectorPastor">Seleccionar Pastor *</label>
               <select id="selectorPastor" required>
@@ -78,32 +168,23 @@
                 <option value="Pastor Roberto">Pastor Roberto</option>
               </select>
             </div>
-            <button id="btnConfirmarAsignacion" class="btn btn-primary">
-              Confirmar Asignación
-            </button>
-            <button id="btnCancelarAsignacion" class="btn btn-danger">
-              Cancelar
-            </button>
+
+            <div id="mensajeAsignacion" class="mensaje"></div>
+
+            <div class="modal-footer">
+              <button id="btnConfirmarAsignacion" class="btn btn-primary">
+                Confirmar
+              </button>
+              <button id="btnCancelarAsignacion" class="btn btn-secondary">
+                Cancelar
+              </button>
+            </div>
           </div>
-
-          <div id="mensajeAsignacion" class="mensaje"></div>
-        </section>
-
-        <!-- Sección de Personas Atendidas -->
-        <section class="lista-section">
-          <h2>✅ Personas Atendidas</h2>
-          <button id="btnRefrescarAtendidas" class="btn btn-secondary">
-            Actualizar Atendidas
-          </button>
-
-          <div id="listadoAtendidas" class="listado">
-            <p class="loading">Cargando personas atendidas...</p>
-          </div>
-        </section>
-      </main>
+        </div>
+      </div>
 
       <footer>
-        <p>&copy; 2026 Jesús es Rey | Aplicación Offline</p>
+        <p>&copy; 2026 Bethel | Aplicación Offline</p>
       </footer>
     </div>
 

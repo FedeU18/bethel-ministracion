@@ -59,6 +59,56 @@ function addMissingColumns() {
         );
       }
     }
+
+    // Verificar e intentar agregar columna 'edad'
+    try {
+      db.exec("SELECT edad FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'edad'...");
+        db.exec("ALTER TABLE personas ADD COLUMN edad INTEGER");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'telefono'
+    try {
+      db.exec("SELECT telefono FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'telefono'...");
+        db.exec("ALTER TABLE personas ADD COLUMN telefono TEXT");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'dni'
+    try {
+      db.exec("SELECT dni FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'dni'...");
+        db.exec("ALTER TABLE personas ADD COLUMN dni TEXT");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'lider'
+    try {
+      db.exec("SELECT lider FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'lider'...");
+        db.exec("ALTER TABLE personas ADD COLUMN lider TEXT");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'coordinador'
+    try {
+      db.exec("SELECT coordinador FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'coordinador'...");
+        db.exec("ALTER TABLE personas ADD COLUMN coordinador TEXT");
+      }
+    }
   } catch (error) {
     console.warn("Aviso al agregar columnas:", error.message);
   }
@@ -99,33 +149,58 @@ function initializeDatabase() {
 
 /**
  * Agrega una nueva persona a la base de datos
- * @param {string} apellido - Apellido de la persona
- * @param {string} nombre - Nombre de la persona
+ * @param {Object} personData - Datos de la persona
+ * @param {string} personData.apellido - Apellido de la persona
+ * @param {string} personData.nombre - Nombre de la persona
+ * @param {number} [personData.edad] - Edad de la persona (opcional)
+ * @param {string} [personData.telefono] - Teléfono de la persona (opcional)
+ * @param {string} [personData.dni] - DNI de la persona (opcional)
+ * @param {string} [personData.lider] - Líder de la persona (opcional)
+ * @param {string} [personData.coordinador] - Coordinador de la persona (opcional)
  * @returns {number} ID de la persona agregada
  */
-function addPerson(apellido, nombre) {
+function addPerson(personData) {
   try {
-    // Validar datos
-    if (!apellido || !nombre) {
+    // Validar datos obligatorios
+    if (!personData.apellido || !personData.nombre) {
       throw new Error("El apellido y nombre son requeridos");
     }
 
-    const trimmedApellido = apellido.trim();
-    const trimmedNombre = nombre.trim();
+    const trimmedApellido = personData.apellido.trim();
+    const trimmedNombre = personData.nombre.trim();
 
     if (trimmedApellido.length === 0 || trimmedNombre.length === 0) {
       throw new Error("El apellido y nombre no pueden estar vacíos");
     }
 
+    // Preparar datos opcionales
+    const edad = personData.edad || null;
+    const telefono = personData.telefono ? personData.telefono.trim() : null;
+    const dni = personData.dni ? personData.dni.trim() : null;
+    const lider = personData.lider ? personData.lider.trim() : null;
+    const coordinador = personData.coordinador
+      ? personData.coordinador.trim()
+      : null;
+
     const insertSQL = `
-      INSERT INTO personas (apellido, nombre)
-      VALUES (?, ?)
+      INSERT INTO personas (apellido, nombre, edad, telefono, dni, lider, coordinador, estado)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente')
     `;
 
     const stmt = db.prepare(insertSQL);
-    const result = stmt.run(trimmedApellido, trimmedNombre);
+    const result = stmt.run(
+      trimmedApellido,
+      trimmedNombre,
+      edad,
+      telefono,
+      dni,
+      lider,
+      coordinador,
+    );
 
-    console.log(`Persona agregada: ${trimmedApellido}, ${trimmedNombre}`);
+    console.log(
+      `Persona agregada: ${trimmedApellido}, ${trimmedNombre} (ID: ${result.lastInsertRowid})`,
+    );
     return result.lastInsertRowid;
   } catch (error) {
     console.error("Error al agregar persona:", error);
@@ -232,7 +307,8 @@ function assignPastorAndAttend(id, pastor) {
 function getPendingPeople() {
   try {
     const selectSQL = `
-      SELECT id, apellido, nombre, fecha_registro, estado, pastor
+      SELECT id, apellido, nombre, edad, telefono, dni, lider, coordinador,
+             fecha_registro, estado, pastor
       FROM personas
       WHERE estado = 'pendiente'
       ORDER BY fecha_registro ASC
@@ -255,7 +331,8 @@ function getPendingPeople() {
 function getAttendedPeople() {
   try {
     const selectSQL = `
-      SELECT id, apellido, nombre, fecha_registro, estado, pastor, fecha_atencion
+      SELECT id, apellido, nombre, edad, telefono, dni, lider, coordinador,
+             fecha_registro, estado, pastor, fecha_atencion
       FROM personas
       WHERE estado = 'atendido'
       ORDER BY fecha_atencion DESC

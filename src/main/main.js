@@ -82,7 +82,7 @@ app.on("activate", function () {
 // Agregar una nueva persona a la base de datos
 ipcMain.handle("add-person", async (event, personData) => {
   try {
-    const result = addPerson(personData.apellido, personData.nombre);
+    const result = addPerson(personData);
     return { success: true, id: result };
   } catch (error) {
     console.error("Error al agregar persona:", error);
