@@ -6,9 +6,12 @@
 const Database = require("better-sqlite3");
 const path = require("path");
 const fs = require("fs");
+const { app } = require("electron");
 
-// Ruta de la base de datos
-const dbPath = path.join(__dirname, "..", "..", "data", "ministracion.db");
+// Ruta de la base de datos en el directorio de datos de usuario
+// Esto garantiza que funcione tanto en desarrollo como en producción
+const userDataPath = app.getPath("userData");
+const dbPath = path.join(userDataPath, "ministracion.db");
 
 // Asegurar que el directorio de datos existe
 const dataDir = path.dirname(dbPath);

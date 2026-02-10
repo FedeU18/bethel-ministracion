@@ -425,16 +425,14 @@
 
           <div class="modal-body">
             <div class="form-group">
-              <label for="selectorPastor">Seleccionar Pastor *</label>
-              <select id="selectorPastor" required>
-                <option value="">-- Seleccionar pastor --</option>
-                <option value="Pastor Carlos">Pastor Carlos</option>
-                <option value="Pastor Juan">Pastor Juan</option>
-                <option value="Pastor María">Pastor María</option>
-                <option value="Pastor Pedro">Pastor Pedro</option>
-                <option value="Pastor Ana">Pastor Ana</option>
-                <option value="Pastor Roberto">Pastor Roberto</option>
-              </select>
+              <label for="selectorPastor">Nombre del Pastor *</label>
+              <input
+                type="text"
+                id="selectorPastor"
+                name="pastor"
+                placeholder="Ej: Pastor Carlos"
+                required
+              />
             </div>
 
             <div id="mensajeAsignacion" class="mensaje"></div>
