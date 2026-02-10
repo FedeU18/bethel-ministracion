@@ -8,22 +8,55 @@
   </head>
   <body>
     <div class="container">
-      <!-- Header con botón de registrar -->
+      <!-- Header con botones de registrar -->
       <header>
         <h1>📖 Registro de Ministración</h1>
-        <button id="btnAbrirModal" class="btn btn-primary">
-          + Registrar Persona
-        </button>
+        <div class="header-buttons">
+          <button id="btnRegistrarHombre" class="btn btn-primary">
+            + Registrar Hombre
+          </button>
+          <button id="btnRegistrarMujer" class="btn btn-primary">
+            + Registrar Mujer
+          </button>
+          <button id="btnRegistrarMatrimonio" class="btn btn-primary">
+            + Registrar Matrimonio
+          </button>
+        </div>
       </header>
+
+      <!-- Búsqueda -->
+      <div class="busqueda-bar">
+        <input
+          type="text"
+          id="inputBusqueda"
+          class="input-busqueda"
+          placeholder="🔍 Buscar por nombre, apellido..."
+        />
+      </div>
+
+      <!-- Filtros -->
+      <div class="filtros">
+        <label>Filtrar por tipo:</label>
+        <div class="filtros-botones">
+          <button class="btn-filtro active" data-filtro="todos">Todos</button>
+          <button class="btn-filtro" data-filtro="hombre">Hombres</button>
+          <button class="btn-filtro" data-filtro="mujer">Mujeres</button>
+          <button class="btn-filtro" data-filtro="matrimonio">
+            Matrimonios
+          </button>
+        </div>
+      </div>
 
       <!-- Layout de 2 columnas -->
       <main class="main-grid">
         <!-- Columna Izquierda: Personas Pendientes -->
         <section class="columna-izquierda">
-          <h2>⏳ Personas Registradas (Pendientes)</h2>
-          <button id="btnRefrescarPendientes" class="btn btn-secondary">
-            Actualizar
-          </button>
+          <h2>
+            ⏳ Personas Registradas (Pendientes)
+            <button id="btnRefrescarPendientes" class="btn btn-secondary">
+              Actualizar
+            </button>
+          </h2>
           <div id="listadoPendientes" class="listado">
             <p class="loading">Cargando...</p>
           </div>
@@ -31,32 +64,34 @@
 
         <!-- Columna Derecha: Personas Ministradas -->
         <section class="columna-derecha">
-          <h2>✅ Personas Ministradas</h2>
-          <button id="btnRefrescarAtendidas" class="btn btn-secondary">
-            Actualizar
-          </button>
+          <h2>
+            ✅ Personas Ministradas
+            <button id="btnRefrescarAtendidas" class="btn btn-secondary">
+              Actualizar
+            </button>
+          </h2>
           <div id="listadoAtendidas" class="listado">
             <p class="loading">Cargando...</p>
           </div>
         </section>
       </main>
 
-      <!-- Modal de Registro -->
-      <div id="modalRegistro" class="modal">
+      <!-- Modal de Registro Hombre -->
+      <div id="modalHombre" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
           <div class="modal-header">
-            <h2>Registrar Nueva Persona</h2>
-            <button id="btnCerrarModal" class="btn-close">&times;</button>
+            <h2>Registrar Hombre</h2>
+            <button class="btn-close-hombre btn-close">&times;</button>
           </div>
 
-          <form id="registroForm" class="modal-body">
+          <form id="formHombre" class="modal-body">
             <div class="form-row">
               <div class="form-group">
-                <label for="nombre">Nombre *</label>
+                <label for="nombreHombre">Nombre *</label>
                 <input
                   type="text"
-                  id="nombre"
+                  id="nombreHombre"
                   name="nombre"
                   placeholder="Ej: Juan"
                   required
@@ -65,10 +100,10 @@
               </div>
 
               <div class="form-group">
-                <label for="apellido">Apellido *</label>
+                <label for="apellidoHombre">Apellido *</label>
                 <input
                   type="text"
-                  id="apellido"
+                  id="apellidoHombre"
                   name="apellido"
                   placeholder="Ej: García"
                   required
@@ -78,10 +113,10 @@
 
             <div class="form-row">
               <div class="form-group">
-                <label for="edad">Edad</label>
+                <label for="edadHombre">Edad</label>
                 <input
                   type="number"
-                  id="edad"
+                  id="edadHombre"
                   name="edad"
                   placeholder="Ej: 25"
                   min="1"
@@ -90,32 +125,10 @@
               </div>
 
               <div class="form-group">
-                <label for="telefono">Teléfono</label>
+                <label for="liderHombre">Líder</label>
                 <input
                   type="text"
-                  id="telefono"
-                  name="telefono"
-                  placeholder="Ej: 123456789"
-                />
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="dni">DNI</label>
-                <input
-                  type="text"
-                  id="dni"
-                  name="dni"
-                  placeholder="Ej: 12345678"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="lider">Líder</label>
-                <input
-                  type="text"
-                  id="lider"
+                  id="liderHombre"
                   name="lider"
                   placeholder="Ej: Pastor Juan"
                 />
@@ -123,20 +136,275 @@
             </div>
 
             <div class="form-group">
-              <label for="coordinador">Coordinador</label>
+              <label for="coordinadorHombre">Coordinador</label>
               <input
                 type="text"
-                id="coordinador"
+                id="coordinadorHombre"
                 name="coordinador"
                 placeholder="Ej: María López"
               />
             </div>
 
-            <div id="mensajeEstado" class="mensaje"></div>
+            <div id="mensajeHombre" class="mensaje"></div>
 
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>
-              <button type="button" id="btnCancelar" class="btn btn-secondary">
+              <button
+                type="button"
+                class="btn-cancelar-hombre btn btn-secondary"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Registro Mujer -->
+      <div id="modalMujer" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Registrar Mujer</h2>
+            <button class="btn-close-mujer btn-close">&times;</button>
+          </div>
+
+          <form id="formMujer" class="modal-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreMujer">Nombre *</label>
+                <input
+                  type="text"
+                  id="nombreMujer"
+                  name="nombre"
+                  placeholder="Ej: María"
+                  required
+                  autofocus
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="apellidoMujer">Apellido *</label>
+                <input
+                  type="text"
+                  id="apellidoMujer"
+                  name="apellido"
+                  placeholder="Ej: López"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edadMujer">Edad</label>
+                <input
+                  type="number"
+                  id="edadMujer"
+                  name="edad"
+                  placeholder="Ej: 25"
+                  min="1"
+                  max="120"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="liderMujer">Líder</label>
+                <input
+                  type="text"
+                  id="liderMujer"
+                  name="lider"
+                  placeholder="Ej: Pastor Ana"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="coordinadorMujer">Coordinador</label>
+              <input
+                type="text"
+                id="coordinadorMujer"
+                name="coordinador"
+                placeholder="Ej: Pedro González"
+              />
+            </div>
+
+            <div id="mensajeMujer" class="mensaje"></div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button
+                type="button"
+                class="btn-cancelar-mujer btn btn-secondary"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Registro Matrimonio -->
+      <div id="modalMatrimonio" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Registrar Matrimonio</h2>
+            <button class="btn-close-matrimonio btn-close">&times;</button>
+          </div>
+
+          <form id="formMatrimonio" class="modal-body">
+            <h3>Datos del Esposo</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreEsposo">Nombre Esposo *</label>
+                <input
+                  type="text"
+                  id="nombreEsposo"
+                  name="nombre_esposo"
+                  placeholder="Ej: Juan"
+                  required
+                  autofocus
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="apellidoEsposo">Apellido Esposo</label>
+                <input
+                  type="text"
+                  id="apellidoEsposo"
+                  name="apellido_esposo"
+                  placeholder="Ej: García"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edadEsposo">Edad Esposo</label>
+                <input
+                  type="number"
+                  id="edadEsposo"
+                  name="edad_esposo"
+                  placeholder="Ej: 30"
+                  min="1"
+                  max="120"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="liderEsposo">Líder Esposo</label>
+                <input
+                  type="text"
+                  id="liderEsposo"
+                  name="lider_esposo"
+                  placeholder="Ej: Pastor Carlos"
+                />
+              </div>
+            </div>
+
+            <h3>Datos de la Esposa</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreEsposa">Nombre Esposa *</label>
+                <input
+                  type="text"
+                  id="nombreEsposa"
+                  name="nombre_esposa"
+                  placeholder="Ej: María"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="apellidoEsposa">Apellido Esposa</label>
+                <input
+                  type="text"
+                  id="apellidoEsposa"
+                  name="apellido_esposa"
+                  placeholder="Ej: López"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edadEsposa">Edad Esposa</label>
+                <input
+                  type="number"
+                  id="edadEsposa"
+                  name="edad_esposa"
+                  placeholder="Ej: 28"
+                  min="1"
+                  max="120"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="liderEsposa">Líder Esposa</label>
+                <input
+                  type="text"
+                  id="liderEsposa"
+                  name="lider_esposa"
+                  placeholder="Ej: Pastor Ana"
+                />
+              </div>
+            </div>
+
+            <h3>Datos Comunes</h3>
+            <div class="form-group">
+              <label for="coordinadorMatrimonio">Coordinador</label>
+              <input
+                type="text"
+                id="coordinadorMatrimonio"
+                name="coordinador"
+                placeholder="Ej: Pedro González"
+              />
+            </div>
+
+            <div id="mensajeMatrimonio" class="mensaje"></div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button
+                type="button"
+                class="btn-cancelar-matrimonio btn btn-secondary"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Edición de Registro -->
+      <div id="modalEdicion" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Editar Registro</h2>
+            <button id="btnCerrarModalEdicion" class="btn-close">
+              &times;
+            </button>
+          </div>
+
+          <form id="formEdicion" class="modal-body">
+            <!-- Contenido dinámico según el tipo -->
+            <div id="contenidoEdicion">
+              <p class="loading">Cargando formulario...</p>
+            </div>
+
+            <div id="mensajeEdicion" class="mensaje"></div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">
+                Guardar Cambios
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="cerrarEdicion()"
+              >
                 Cancelar
               </button>
             </div>

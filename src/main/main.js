@@ -10,6 +10,8 @@ const {
   addPerson,
   getAllPeople,
   assignPastorAndAttend,
+  updatePerson,
+  deletePerson,
   getPendingPeople,
   getAttendedPeople,
 } = require("../database/db");
@@ -134,6 +136,36 @@ ipcMain.handle("assign-pastor", async (event, { id, pastor }) => {
     }
   } catch (error) {
     console.error("Error al asignar pastor:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Actualizar datos de una persona
+ipcMain.handle("update-person", async (event, { id, data }) => {
+  try {
+    const result = updatePerson(id, data);
+    if (result) {
+      return { success: true };
+    } else {
+      return { success: false, error: "No se pudo actualizar el registro" };
+    }
+  } catch (error) {
+    console.error("Error al actualizar persona:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Eliminar una persona
+ipcMain.handle("delete-person", async (event, id) => {
+  try {
+    const result = deletePerson(id);
+    if (result) {
+      return { success: true };
+    } else {
+      return { success: false, error: "No se pudo eliminar el registro" };
+    }
+  } catch (error) {
+    console.error("Error al eliminar persona:", error);
     return { success: false, error: error.message };
   }
 });

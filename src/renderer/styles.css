@@ -24,7 +24,7 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   background: #fff;
 }
 
@@ -45,6 +45,11 @@ header h1 {
   margin: 0;
 }
 
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 header .btn-primary {
   background: white;
   color: #667eea;
@@ -61,20 +66,94 @@ header .btn-primary:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Main Grid - 2 Columnas */
+/* Barra de Búsqueda */
+.busqueda-bar {
+  padding: 15px 30px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.input-busqueda {
+  flex: 1;
+  max-width: 350px;
+  padding: 12px 15px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+}
+
+.input-busqueda:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-busqueda::placeholder {
+  color: #999;
+}
+
+/* Filtros */
+.filtros {
+  padding: 20px 30px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.filtros label {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.filtros-botones {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-filtro {
+  padding: 8px 16px;
+  background: white;
+  border: 2px solid #667eea;
+  color: #667eea;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-filtro:hover {
+  background: #f0f0f0;
+}
+
+.btn-filtro.active {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+/* Main Grid - Layout Vertical (un elemento debajo del otro) */
 .main-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 20px;
   padding: 30px;
-  overflow: hidden;
+  overflow-y: visible;
 }
 
 .columna-izquierda,
 .columna-derecha {
   background: white;
   border-radius: 8px;
+  min-height: 400px;
+  max-height: 70vh;
   padding: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -108,10 +187,12 @@ header .btn-primary:hover {
   z-index: 1000;
   align-items: center;
   justify-content: center;
+  pointer-events: none; /* CRÍTICO: Modales inactivos NO capturan eventos */
 }
 
 .modal.active {
   display: flex;
+  pointer-events: auto; /* Solo el modal activo captura eventos */
 }
 
 .modal-overlay {
@@ -122,6 +203,7 @@ header .btn-primary:hover {
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(3px);
+  pointer-events: none; /* NO captura eventos - deja pasar al content */
 }
 
 .modal-content {
@@ -185,6 +267,18 @@ header .btn-primary:hover {
 
 .modal-body {
   padding: 25px;
+}
+
+.modal-body h3 {
+  color: #667eea;
+  font-size: 1.1em;
+  margin: 20px 0 15px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-body h3:first-child {
+  margin-top: 0;
 }
 
 .modal-footer {
@@ -280,12 +374,38 @@ header .btn-primary:hover {
   color: white;
   padding: 8px 15px;
   font-size: 0.85em;
-  width: 100%;
-  margin: 0;
+  width: auto;
+  margin-right: 8px;
 }
 
 .btn-asignar:hover {
   background: #138496;
+}
+
+.btn-editar {
+  background: #ffc107;
+  color: #333;
+  padding: 8px 15px;
+  font-size: 0.85em;
+  width: auto;
+  margin-right: 8px;
+}
+
+.btn-editar:hover {
+  background: #e0a800;
+}
+
+.btn-eliminar {
+  background: #dc3545;
+  color: white;
+  padding: 8px 15px;
+  font-size: 0.85em;
+  width: auto;
+  margin-right: 8px;
+}
+
+.btn-eliminar:hover {
+  background: #c82333;
 }
 
 .btn-danger {

@@ -70,26 +70,6 @@ function addMissingColumns() {
       }
     }
 
-    // Verificar e intentar agregar columna 'telefono'
-    try {
-      db.exec("SELECT telefono FROM personas LIMIT 1");
-    } catch (error) {
-      if (error.message.includes("no such column")) {
-        console.log("Agregando columna 'telefono'...");
-        db.exec("ALTER TABLE personas ADD COLUMN telefono TEXT");
-      }
-    }
-
-    // Verificar e intentar agregar columna 'dni'
-    try {
-      db.exec("SELECT dni FROM personas LIMIT 1");
-    } catch (error) {
-      if (error.message.includes("no such column")) {
-        console.log("Agregando columna 'dni'...");
-        db.exec("ALTER TABLE personas ADD COLUMN dni TEXT");
-      }
-    }
-
     // Verificar e intentar agregar columna 'lider'
     try {
       db.exec("SELECT lider FROM personas LIMIT 1");
@@ -107,6 +87,44 @@ function addMissingColumns() {
       if (error.message.includes("no such column")) {
         console.log("Agregando columna 'coordinador'...");
         db.exec("ALTER TABLE personas ADD COLUMN coordinador TEXT");
+      }
+    }
+
+    // Verificar e intentar agregar columna 'tipo'
+    try {
+      db.exec("SELECT tipo FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columna 'tipo'...");
+        db.exec("ALTER TABLE personas ADD COLUMN tipo TEXT DEFAULT 'hombre'");
+      }
+    }
+
+    // Verificar e intentar agregar columnas para matrimonio
+    try {
+      db.exec("SELECT nombre_esposo FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columnas para matrimonio...");
+        db.exec("ALTER TABLE personas ADD COLUMN apellido_esposo TEXT");
+        db.exec("ALTER TABLE personas ADD COLUMN nombre_esposo TEXT");
+        db.exec("ALTER TABLE personas ADD COLUMN edad_esposo INTEGER");
+        db.exec("ALTER TABLE personas ADD COLUMN lider_esposo TEXT");
+        db.exec("ALTER TABLE personas ADD COLUMN apellido_esposa TEXT");
+        db.exec("ALTER TABLE personas ADD COLUMN nombre_esposa TEXT");
+        db.exec("ALTER TABLE personas ADD COLUMN edad_esposa INTEGER");
+        db.exec("ALTER TABLE personas ADD COLUMN lider_esposa TEXT");
+      }
+    }
+
+    // Verificar e intentar agregar apellidos de esposo/esposa (para bases existentes)
+    try {
+      db.exec("SELECT apellido_esposo FROM personas LIMIT 1");
+    } catch (error) {
+      if (error.message.includes("no such column")) {
+        console.log("Agregando columnas de apellidos para matrimonio...");
+        db.exec("ALTER TABLE personas ADD COLUMN apellido_esposo TEXT");
+        db.exec("ALTER TABLE personas ADD COLUMN apellido_esposa TEXT");
       }
     }
   } catch (error) {
@@ -150,58 +168,84 @@ function initializeDatabase() {
 /**
  * Agrega una nueva persona a la base de datos
  * @param {Object} personData - Datos de la persona
- * @param {string} personData.apellido - Apellido de la persona
- * @param {string} personData.nombre - Nombre de la persona
- * @param {number} [personData.edad] - Edad de la persona (opcional)
- * @param {string} [personData.telefono] - Teléfono de la persona (opcional)
- * @param {string} [personData.dni] - DNI de la persona (opcional)
- * @param {string} [personData.lider] - Líder de la persona (opcional)
- * @param {string} [personData.coordinador] - Coordinador de la persona (opcional)
  * @returns {number} ID de la persona agregada
  */
 function addPerson(personData) {
   try {
-    // Validar datos obligatorios
-    if (!personData.apellido || !personData.nombre) {
-      throw new Error("El apellido y nombre son requeridos");
+    const tipo = personData.tipo || "hombre";
+
+    if (tipo === "matrimonio") {
+      // Validar datos de matrimonio
+      if (!personData.nombre_esposo || !personData.nombre_esposa) {
+        throw new Error("Los nombres de esposo y esposa son requeridos");
+      }
+
+      const insertSQL = `
+        INSERT INTO personas (
+          tipo, apellido, nombre, apellido_esposo, nombre_esposo, edad_esposo, lider_esposo,
+          apellido_esposa, nombre_esposa, edad_esposa, lider_esposa, coordinador, estado
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente')
+      `;
+
+      const stmt = db.prepare(insertSQL);
+      const result = stmt.run(
+        "matrimonio",
+        "Matrimonio",
+        personData.nombre_esposo ? personData.nombre_esposo.trim() : "-",
+        personData.apellido_esposo ? personData.apellido_esposo.trim() : null,
+        personData.nombre_esposo.trim(),
+        personData.edad_esposo || null,
+        personData.lider_esposo ? personData.lider_esposo.trim() : null,
+        personData.apellido_esposa ? personData.apellido_esposa.trim() : null,
+        personData.nombre_esposa.trim(),
+        personData.edad_esposa || null,
+        personData.lider_esposa ? personData.lider_esposa.trim() : null,
+        personData.coordinador ? personData.coordinador.trim() : null,
+      );
+
+      console.log(
+        `Matrimonio agregado: ${personData.apellido_esposo || ""} ${personData.nombre_esposo} y ${personData.apellido_esposa || ""} ${personData.nombre_esposa} (ID: ${result.lastInsertRowid})`,
+      );
+      return result.lastInsertRowid;
+    } else {
+      // Validar datos para hombre/mujer
+      if (!personData.apellido || !personData.nombre) {
+        throw new Error("El apellido y nombre son requeridos");
+      }
+
+      const trimmedApellido = personData.apellido.trim();
+      const trimmedNombre = personData.nombre.trim();
+
+      if (trimmedApellido.length === 0 || trimmedNombre.length === 0) {
+        throw new Error("El apellido y nombre no pueden estar vacíos");
+      }
+
+      const edad = personData.edad || null;
+      const lider = personData.lider ? personData.lider.trim() : null;
+      const coordinador = personData.coordinador
+        ? personData.coordinador.trim()
+        : null;
+
+      const insertSQL = `
+        INSERT INTO personas (tipo, apellido, nombre, edad, lider, coordinador, estado)
+        VALUES (?, ?, ?, ?, ?, ?, 'pendiente')
+      `;
+
+      const stmt = db.prepare(insertSQL);
+      const result = stmt.run(
+        tipo,
+        trimmedApellido,
+        trimmedNombre,
+        edad,
+        lider,
+        coordinador,
+      );
+
+      console.log(
+        `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} agregado: ${trimmedApellido}, ${trimmedNombre} (ID: ${result.lastInsertRowid})`,
+      );
+      return result.lastInsertRowid;
     }
-
-    const trimmedApellido = personData.apellido.trim();
-    const trimmedNombre = personData.nombre.trim();
-
-    if (trimmedApellido.length === 0 || trimmedNombre.length === 0) {
-      throw new Error("El apellido y nombre no pueden estar vacíos");
-    }
-
-    // Preparar datos opcionales
-    const edad = personData.edad || null;
-    const telefono = personData.telefono ? personData.telefono.trim() : null;
-    const dni = personData.dni ? personData.dni.trim() : null;
-    const lider = personData.lider ? personData.lider.trim() : null;
-    const coordinador = personData.coordinador
-      ? personData.coordinador.trim()
-      : null;
-
-    const insertSQL = `
-      INSERT INTO personas (apellido, nombre, edad, telefono, dni, lider, coordinador, estado)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente')
-    `;
-
-    const stmt = db.prepare(insertSQL);
-    const result = stmt.run(
-      trimmedApellido,
-      trimmedNombre,
-      edad,
-      telefono,
-      dni,
-      lider,
-      coordinador,
-    );
-
-    console.log(
-      `Persona agregada: ${trimmedApellido}, ${trimmedNombre} (ID: ${result.lastInsertRowid})`,
-    );
-    return result.lastInsertRowid;
   } catch (error) {
     console.error("Error al agregar persona:", error);
     throw error;
@@ -301,13 +345,80 @@ function assignPastorAndAttend(id, pastor) {
 }
 
 /**
+ * Actualiza los datos de una persona
+ * @param {number} id - ID de la persona
+ * @param {Object} data - Objeto con los datos a actualizar
+ * @returns {boolean} Verdadero si se actualizó correctamente
+ */
+function updatePerson(id, data) {
+  try {
+    const tipo = data.tipo || "hombre";
+
+    if (tipo === "matrimonio") {
+      // Actualizar matrimonio
+      const updateSQL = `
+        UPDATE personas
+        SET apellido_esposo = ?, nombre_esposo = ?, edad_esposo = ?, lider_esposo = ?,
+            apellido_esposa = ?, nombre_esposa = ?, edad_esposa = ?, lider_esposa = ?,
+            coordinador = ?
+        WHERE id = ?
+      `;
+
+      const stmt = db.prepare(updateSQL);
+      const result = stmt.run(
+        data.apellido_esposo ? data.apellido_esposo.trim() : null,
+        data.nombre_esposo.trim(),
+        data.edad_esposo || null,
+        data.lider_esposo ? data.lider_esposo.trim() : null,
+        data.apellido_esposa ? data.apellido_esposa.trim() : null,
+        data.nombre_esposa.trim(),
+        data.edad_esposa || null,
+        data.lider_esposa ? data.lider_esposa.trim() : null,
+        data.coordinador ? data.coordinador.trim() : null,
+        id,
+      );
+
+      console.log(`Matrimonio actualizado (ID: ${id})`);
+      return result.changes > 0;
+    } else {
+      // Actualizar hombre/mujer
+      const updateSQL = `
+        UPDATE personas
+        SET apellido = ?, nombre = ?, edad = ?, lider = ?, coordinador = ?
+        WHERE id = ?
+      `;
+
+      const stmt = db.prepare(updateSQL);
+      const result = stmt.run(
+        data.apellido.trim(),
+        data.nombre.trim(),
+        data.edad || null,
+        data.lider ? data.lider.trim() : null,
+        data.coordinador ? data.coordinador.trim() : null,
+        id,
+      );
+
+      console.log(
+        `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} actualizado (ID: ${id})`,
+      );
+      return result.changes > 0;
+    }
+  } catch (error) {
+    console.error("Error al actualizar persona:", error);
+    throw error;
+  }
+}
+
+/**
  * Obtiene todas las personas con estado "pendiente"
  * @returns {Array} Array de personas pendientes
  */
 function getPendingPeople() {
   try {
     const selectSQL = `
-      SELECT id, apellido, nombre, edad, telefono, dni, lider, coordinador,
+      SELECT id, tipo, apellido, nombre, edad, lider, coordinador,
+             apellido_esposo, nombre_esposo, edad_esposo, lider_esposo,
+             apellido_esposa, nombre_esposa, edad_esposa, lider_esposa,
              fecha_registro, estado, pastor
       FROM personas
       WHERE estado = 'pendiente'
@@ -317,7 +428,14 @@ function getPendingPeople() {
     const stmt = db.prepare(selectSQL);
     const people = stmt.all();
 
-    return people;
+    // Convertir fechas a strings para evitar problemas de clonado en IPC
+    return people.map((person) => ({
+      ...person,
+      fecha_registro:
+        person.fecha_registro instanceof Date
+          ? person.fecha_registro.toISOString()
+          : person.fecha_registro,
+    }));
   } catch (error) {
     console.error("Error al obtener personas pendientes:", error);
     throw error;
@@ -331,7 +449,9 @@ function getPendingPeople() {
 function getAttendedPeople() {
   try {
     const selectSQL = `
-      SELECT id, apellido, nombre, edad, telefono, dni, lider, coordinador,
+      SELECT id, tipo, apellido, nombre, edad, lider, coordinador,
+             apellido_esposo, nombre_esposo, edad_esposo, lider_esposo,
+             apellido_esposa, nombre_esposa, edad_esposa, lider_esposa,
              fecha_registro, estado, pastor, fecha_atencion
       FROM personas
       WHERE estado = 'atendido'
@@ -341,9 +461,46 @@ function getAttendedPeople() {
     const stmt = db.prepare(selectSQL);
     const people = stmt.all();
 
-    return people;
+    // Convertir fechas a strings para evitar problemas de clonado en IPC
+    return people.map((person) => ({
+      ...person,
+      fecha_registro:
+        person.fecha_registro instanceof Date
+          ? person.fecha_registro.toISOString()
+          : person.fecha_registro,
+      fecha_atencion:
+        person.fecha_atencion instanceof Date
+          ? person.fecha_atencion.toISOString()
+          : person.fecha_atencion,
+    }));
   } catch (error) {
     console.error("Error al obtener personas atendidas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Elimina una persona de la base de datos
+ * @param {number} id - ID de la persona a eliminar
+ * @returns {boolean} Verdadero si se eliminó correctamente
+ */
+function deletePerson(id) {
+  try {
+    const deleteSQL = `
+      DELETE FROM personas
+      WHERE id = ?
+    `;
+
+    const stmt = db.prepare(deleteSQL);
+    const result = stmt.run(id);
+
+    if (result.changes > 0) {
+      console.log(`Persona eliminada (ID: ${id})`);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Error al eliminar persona:", error);
     throw error;
   }
 }
@@ -356,6 +513,8 @@ module.exports = {
   getPersonById,
   updatePersonStatus,
   assignPastorAndAttend,
+  updatePerson,
+  deletePerson,
   getPendingPeople,
   getAttendedPeople,
 };

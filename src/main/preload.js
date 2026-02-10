@@ -40,4 +40,19 @@ contextBridge.exposeInMainWorld("electronAPI", {
    */
   assignPastor: (id, pastor) =>
     ipcRenderer.invoke("assign-pastor", { id, pastor }),
+
+  /**
+   * Actualiza los datos de una persona
+   * @param {number} id - ID de la persona
+   * @param {Object} data - Datos a actualizar
+   * @returns {Promise<Object>} Resultado de la operación
+   */
+  updatePerson: (id, data) => ipcRenderer.invoke("update-person", { id, data }),
+
+  /**
+   * Elimina una persona de la base de datos
+   * @param {number} id - ID de la persona a eliminar
+   * @returns {Promise<Object>} Resultado de la operación
+   */
+  deletePerson: (id) => ipcRenderer.invoke("delete-person", id),
 });
